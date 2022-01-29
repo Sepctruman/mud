@@ -26,6 +26,7 @@ std::string print_obj_affects(const obj_affected_type &affect);
 void print_obj_affects(CharacterData *ch, const obj_affected_type &affect);
 void set_obj_eff(ObjectData *itemobj, EApplyLocation type, int mod);
 void set_obj_aff(ObjectData *itemobj, EAffectFlag bitv);
+void delete_item(const std::size_t pt_num, ObjVnum vnum);
 
 /// Чуть более гибкий, но не менее упоротый аналог GET_OBJ_VAL полей
 /// Если поле нужно сохранять в обж-файл - вписываем в TextId::init_obj_vals()
@@ -883,7 +884,6 @@ inline void CObjectPrototype::set_affected(const size_t index, const EApplyLocat
 	m_affected[index].location = location;
 	m_affected[index].modifier = modifier;
 }
-//void delete_item(const std::size_t pt_num, int vnum);
 inline bool CAN_WEAR(const CObjectPrototype *obj, const EWearFlag part) { return obj->has_wear_flag(part); }
 inline bool CAN_WEAR_ANY(const CObjectPrototype *obj) { return obj->can_wear_any(); }
 inline bool OBJ_FLAGGED(const CObjectPrototype *obj, const EExtraFlag flag) { return obj->get_extra_flag(flag); }

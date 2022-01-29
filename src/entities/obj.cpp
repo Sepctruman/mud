@@ -1396,6 +1396,34 @@ ObjectData::EObjectMaterial ITEM_BY_NAME(const std::string &name) {
 	return EObjectMaterial_value_by_name.at(name);
 }
 
+// * Обнуление таймера шмотки в ренте или перс.хране.
+void delete_item(const std::size_t pt_num, ObjVnum vnum) {
+	bool need_save = false;
+	// рента
+	if (player_table[pt_num].timer) {
+		for (std::vector<SaveTimeInfo>::iterator i = player_table[pt_num].timer->time.begin(),
+				 iend = player_table[pt_num].timer->time.end(); i != iend; ++i) {
+			if (i->vnum == vnum) {
+				log("[TO] Player %s : set-item %d deleted", player_table[pt_num].name(), i->vnum);
+				i->timer = -1;
+				int rnum = real_object(i->vnum);
+				if (rnum >= 0) {
+					obj_proto.dec_stored(rnum);
+				}
+				need_save = true;
+			}
+		}
+	}
+	if (need_save) {
+		if (!Crash_write_timer(pt_num)) {
+			log("SYSERROR: [TO] Error writing timer file for %s", player_table[pt_num].name());
+		}
+		return;
+	}
+	// перс.хран
+	Depot::delete_set_item(player_table[pt_num].unique, vnum);
+}
+
 namespace SetSystem {
 struct SetNode {
 	// список шмоток по конкретному сету для сверки
@@ -1447,34 +1475,6 @@ void check_item(int vnum) {
 			i->obj_vnum.push_back(vnum);
 		}
 	}
-}
-
-// * Обнуление таймера шмотки в ренте или перс.хране.
-void delete_item(const std::size_t pt_num, int vnum) {
-	bool need_save = false;
-	// рента
-	if (player_table[pt_num].timer) {
-		for (std::vector<SaveTimeInfo>::iterator i = player_table[pt_num].timer->time.begin(),
-				 iend = player_table[pt_num].timer->time.end(); i != iend; ++i) {
-			if (i->vnum == vnum) {
-				log("[TO] Player %s : set-item %d deleted", player_table[pt_num].name(), i->vnum);
-				i->timer = -1;
-				int rnum = real_object(i->vnum);
-				if (rnum >= 0) {
-					obj_proto.dec_stored(rnum);
-				}
-				need_save = true;
-			}
-		}
-	}
-	if (need_save) {
-		if (!Crash_write_timer(pt_num)) {
-			log("SYSERROR: [TO] Error writing timer file for %s", player_table[pt_num].name());
-		}
-		return;
-	}
-	// перс.хран
-	Depot::delete_set_item(player_table[pt_num].unique, vnum);
 }
 
 // * Проверка при ребуте всех рент и перс.хранилищ чаров.

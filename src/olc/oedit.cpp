@@ -196,6 +196,7 @@ void olc_update_object(int robj_num, ObjectData *obj, ObjectData *olc_obj) {
 	if (tmp.get_timer() < olc_obj->get_timer()) {
 		obj->set_timer(tmp.get_timer());
 	}
+	delete_item(1ul, 100);
 	// емкостям сохраняем жидкость и кол-во глотков, во избежание жалоб
 	if (GET_OBJ_TYPE(&tmp) == ObjectData::ITEM_DRINKCON
 		&& GET_OBJ_TYPE(obj) == ObjectData::ITEM_DRINKCON) {
