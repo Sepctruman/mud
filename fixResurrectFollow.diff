@@ -1,0 +1,16 @@
+diff --git a/src/game_magic/magic.cpp b/src/game_magic/magic.cpp
+index 7f53867b..3848f1d3 100644
+--- a/src/game_magic/magic.cpp
++++ b/src/game_magic/magic.cpp
+@@ -3059,7 +3059,10 @@ int mag_summons(int level, CharData *ch, ObjData *obj, int spellnum, int savetyp
+ 
+ 	if (spellnum == kSpellResurrection) {
+ 		clear_char_skills(mob);
+-
++		
++		MOB_FLAGS(mob).unset(EMobFlag::kNoGroup);
++		mob->set_master(nullptr);
++		
+ 		sprintf(buf2, "умертвие %s %s", GET_PAD(mob, 1), GET_NAME(mob));
+ 		mob->set_pc_name(buf2);
+ 		sprintf(buf2, "умертвие %s", GET_PAD(mob, 1));
